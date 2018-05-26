@@ -36,6 +36,7 @@ class QrCodeExtension(markdown.Extension):
       "darkcolor" : [ '#000000', "Dark Color" ],
       "bordercolor" : [ '#000000', "Border Color" ],
     }
+    super(QrCodeExtension, self).__init__(*args, **kwargs)
  
   def add_inline(self, md, name, pattern_class, pattern):
     """
@@ -82,6 +83,7 @@ class BasicQrCodePattern(markdown.inlinepatterns.ImagePattern):
       etree = markdown.util.etree
       container = etree.Element('div')
       element = etree.SubElement(container, 'img')
+	  element.set('class','qrcode')
       element.set('src', 'data:image/png;base64,%s' % str(b64encode( qrCodeImage_File.getvalue() ),'utf-8') )
       qrCodeImage_File.close()
  
