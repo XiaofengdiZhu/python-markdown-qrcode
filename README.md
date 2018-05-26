@@ -1,12 +1,35 @@
 QRCODE Markdown Extension
 =========================
 
+# NOW YOU CAN USE IT IN PYTHON3
+
 ## Installation
 
 1. You need to have python-setuptools installed
 `sudo apt-get install python-setuptools`
 1. `python ./setup.py install`
 
+## Config Options
+
+`pixelsize`
+: Pixel Size of each dark and light bit. _Default is 4_
+
+`lightcolor`
+: The color to use for background bits. _Default is #FFFFFF (white)_
+
+`darkcolor`
+: The color to use for foreground bits. _Default is #000000 (black)_
+
+`bordercolor`
+: The color to use for each bit borders. _Default is #000000 (black)_
+
+## Format
+
+### Syntax
+
+This is the short syntax:
+
+    [{ str data to encode }]
 
 ## Legal
 
