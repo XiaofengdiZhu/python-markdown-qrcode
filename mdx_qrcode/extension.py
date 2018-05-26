@@ -83,7 +83,7 @@ class BasicQrCodePattern(markdown.inlinepatterns.ImagePattern):
       etree = markdown.util.etree
       container = etree.Element('div')
       element = etree.SubElement(container, 'img')
-	  element.set('class','qrcode')
+      element.set('class','qrcode')
       element.set('src', 'data:image/png;base64,%s' % str(b64encode( qrCodeImage_File.getvalue() ),'utf-8') )
       qrCodeImage_File.close()
  
