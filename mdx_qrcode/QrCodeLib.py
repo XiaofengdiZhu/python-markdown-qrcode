@@ -117,7 +117,7 @@ class QRCode:
                 pattern = i
         return pattern
 
-    def makeImage(self,pixel_size=4,border_size=1,dark_colour="#000000",light_colour="#ffffff"):
+    def makeImage(self,pixel_size=4,border_color='#000000',dark_colour="#000000",light_colour="#ffffff"):
         canvas_size = (self.getModuleCount() * pixel_size)
         image_canvas = Image.new("RGB", (canvas_size, canvas_size), light_colour)
         image_drawn = ImageDraw.Draw( image_canvas )
@@ -137,7 +137,7 @@ class QRCode:
                         )
                       ],
                       fill = dark_colour,
-                      outline = border_size
+                      outline = border_color
                     )
         del image_drawn
         return image_canvas
@@ -934,7 +934,7 @@ class QRRSBlock:
         if rsBlock == None:
             raise Exception("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel)
 
-        length = len(rsBlock) / 3
+        length = int(len(rsBlock) / 3)
 
         list = []
 
@@ -971,7 +971,6 @@ class QRBitBuffer:
     def get(self, index):
         bufIndex = math.floor(index / 8)
         val = ( (self.buffer[bufIndex] >> (7 - index % 8) ) & 1) == 1
-        print "get ", val
         return ( (self.buffer[bufIndex] >> (7 - index % 8) ) & 1) == 1
     def put(self, num, length):
         for i in range(length):

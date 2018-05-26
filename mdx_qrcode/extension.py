@@ -16,28 +16,27 @@ QRcode markdown filter
 
 
 import markdown
-import StringIO
-from QrCodeLib import *
-from markdown import etree
+from io import BytesIO
+from mdx_qrcode.QrCodeLib import *
+from markdown.util import etree
 from base64 import b64encode
+#from markdown.treeprocessors import Treeprocessor
 
 class QrCodeExtension(markdown.Extension):
   """ QRcode Extension for Python-Markdown. """
-  def __init__(self, configs):
+  def __init__(self, *args, **kwargs):
     """
     Create an instance of QrCodeExtension
 
-    Keyword arguments:
-    * configs: A dict of configuration settings passed in by the user.
     """
     # Set extension defaults
     self.config = {
-      "intPixelSize"  : [  2, "Pixel Size of each dark and light bit" ],
-      "intCanvasSize" : [ 10, "Canvas Size of the QRCode" ],
+      "pixelsize"  : [  4, "Pixel Size of each dark and light bit" ],
+      "lightcolor" : [ '#ffffff', "Light Color" ],
+      "darkcolor" : [ '#ffffff', "Dark Color" ],
+      "bordercolor" : [ '#000000', "Border Color" ],
     }
-    # Override defaults with user settings
-    for key, value in configs:
-      self.setConfig(key, value)
+    super(QrCodeExtension, self).__init__(*args, **kwargs)
 
   def add_inline(self, md, name, pattern_class, pattern):
     """
@@ -53,7 +52,8 @@ class QrCodeExtension(markdown.Extension):
     md.inlinePatterns.add(name, objPattern, "<reference")
 
   def extendMarkdown(self, md, md_globals):
-    self.add_inline( md, "qrcode", BasicQrCodePattern, r'\[\-\[(.*)\]\-\]')
+    self.add_inline( md, "qrcode", BasicQrCodePattern, r'\[\-\[(.*?)\]\-\]')
+    md.registerExtension(self)
 
 class BasicQrCodePattern(markdown.inlinepatterns.Pattern):
   def __init__(self, pattern, config):
@@ -68,22 +68,27 @@ class BasicQrCodePattern(markdown.inlinepatterns.Pattern):
   def handleMatch(self, match):
 
     if match :
-
-      pixel_size = 2
+      pixel_size = self.config['pixelsize'][0]
+      light_color = self.config['lightcolor'][0]
+      dark_color = self.config['darkcolor'][0]
+      border_color = self.config['bordercolor'][0]
       qrcodeSourceData = str(match.group(1))
       qrCodeObject = QRCode(pixel_size, QRErrorCorrectLevel.L)
       qrCodeObject.addData( qrcodeSourceData )
       qrCodeObject.make()
       qrCodeImage = qrCodeObject.makeImage(
         pixel_size = pixel_size,
-        dark_colour = "#000000"
+		border_color = border_color,
+        dark_colour = dark_color,
+		light_colour = light_color
       )
-      qrCodeImage_File = StringIO.StringIO()
+      qrCodeImage_File = BytesIO()
       qrCodeImage.save( qrCodeImage_File , format= 'PNG')
 
-      element = markdown.etree.Element('img')
-      element.set("src", "data:image/png;base64,%s" % b64encode( qrCodeImage_File.getvalue()) )
+      element = markdown.util.etree.Element('img')
+      element.set("src", "data:image/png;base64,%s" % str(b64encode( qrCodeImage_File.getvalue()),'utf-8') )
       element.set("title", "qrcode for : %s " % qrcodeSourceData )
+      element.set("class","qrcode")
 
       qrCodeImage_File.close()
 
@@ -91,13 +96,9 @@ class BasicQrCodePattern(markdown.inlinepatterns.Pattern):
     else :
       return ""
 
-def makeExtension(configs=None):
-  return QrCodeExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+  return QrCodeExtension(*args, **kwargs)
 
-if __name__ == "__main__":
-    import doctest
-    print doctest.testmod()
-    print "-" * 8
-    md = markdown.Markdown(extensions=['qrcode'])
-    print md.convert( __doc__ )
+
+
 

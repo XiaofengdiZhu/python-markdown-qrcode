@@ -1,2 +1,2 @@
-from extension import *
+from mdx_qrcode.extension import *
 
