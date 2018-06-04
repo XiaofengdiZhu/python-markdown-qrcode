@@ -9,6 +9,9 @@ QRCODE Markdown Extension
 `sudo apt-get install python-setuptools`
 1. `python ./setup.py install`
 
+**Or**  
+`pip install git+https://github.com/XiaofengdiZhu/python-markdown-qrcode.git`  
+
 ## Config Options
 
 `pixelsize`
