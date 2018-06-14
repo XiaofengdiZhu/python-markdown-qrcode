@@ -52,7 +52,7 @@ class QrCodeExtension(markdown.Extension):
     md.inlinePatterns.add(name, objPattern, '_begin')
  
   def extendMarkdown(self, md, md_globals):
-    self.add_inline(md, 'qrcode', BasicQrCodePattern, r'\[\{\s(?P<data>.*)\s\}\]')
+    self.add_inline(md, 'qrcode', BasicQrCodePattern, r'\[\{\s(?P<data>.*?)\s\}\]')
 
 class BasicQrCodePattern(markdown.inlinepatterns.ImagePattern):
   def __init__(self, pattern, config):
